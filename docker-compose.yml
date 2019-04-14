@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+  sonarqube:
+    image: sonarqube
+    depends_on:
+      - postgres
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://postgres:5432/sonar
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=${DB_PASSWORD}
+      - sonar.core.serverBaseURL=https://${DOMAIN}
+    networks:
+      - traefik
+    volumes:
+      - sonarqube-conf:/opt/sonarqube/conf
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-extensions:/opt/sonarqube/extensions
+    labels:
+      traefik.enable: true
+      traefik.port: 9000
+      traefik.frontend.rule: "Host:${DOMAIN}"
+    restart: unless-stopped
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - traefik
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+volumes:
+  sonarqube-conf:
+  sonarqube-data:
+  sonarqube-extensions:
+  postgres:
+networks:
+  traefik:
+    name: ${TRAEFIK_NETWORK}
+    external: true

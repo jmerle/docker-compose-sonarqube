@@ -1,4 +1,4 @@
-# Docker Compose SonarQube
+# Traefik SonarQube
 
 A Docker Compose configuration to run [SonarQube](https://www.sonarqube.org/) behind a [Traefik](https://traefik.io/) reverse proxy.
 
